@@ -12,6 +12,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     EditText SearchBysurahNumber;
     ArrayAdapter<String> surahAdapter;
     TextView verse;
+    Button btn;
+    int requiredVerse;
+    int surahStart;
+    int surahNumber;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +43,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         LVsurah.setAdapter(surahAdapter);
         LVsurah.setOnItemClickListener(this);
         SearchBysurahNumber=findViewById(R.id.searchbySurah);
-       verse=findViewById(R.id.textViewVerse);
-        SearchBysurahNumber.addTextChangedListener(new TextWatcher() {
+        verse=findViewById(R.id.textViewVerse);
+        btn=findViewById(R.id.btn1);
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            public void onClick(View view) {
+                try{
 
-            }
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    requiredVerse = Integer.parseInt(String.valueOf(SearchBysurahNumber.getText()));
+                    if(requiredVerse>(q.surahAyatCount[surahNumber])){
+                        verse.setText("Not correct");
+                    }
+                    else {
 
-                //MainActivity.this.surahAdapter.getFilter().filter(charSequence);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+                        verse.setText(String.valueOf(q.QuranArabicText[surahStart + requiredVerse-1]));
+                        //  verse.setText(String.valueOf(q.surahAyatCount[surahNumber]));
+                    }
+                }
+                catch (NumberFormatException e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -62,19 +73,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String surah=adapterView.getItemAtPosition(i).toString();
 
         Toast.makeText(getApplicationContext(), "Clicked"+surah+(i+1), Toast.LENGTH_SHORT).show();
-//        SearchBysurahNumber.setText("");
-        int surahStart=q.SSP[i];
-        try{
-            int requiredVerse = Integer.parseInt(String.valueOf(SearchBysurahNumber.getText()));
-           verse.setText(q.QuranArabicText[surahStart+requiredVerse]);
+
+         surahNumber=i;
+         surahStart=q.SSP[i];
 
         }
-        catch (NumberFormatException e)
-        {
-            e.printStackTrace();
-        }
 
-
-
-        }
 }
